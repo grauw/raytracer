@@ -21,11 +21,19 @@ public class Ray {
 	 * using a shadow feeler).
 	 */
 	public Vec3 localLight( IntersectionInfo info, Light light ) {
-		// diffuse component
-		// replace the line below by meaningful code
-		Vec3 diffuse = new Vec3();
+		/* diffuse component */
+		// vector w towards light source
+		Vec3 lightvector = light.location.minus(info.location);
+		// cos ? = (v · w) / (|v| * |w|)
+		float anglecos = info.normal.dot(lightvector) /
+				(info.normal.length() * lightvector.length());
+		// light color * angle * intensity * diffuse property
+		Vec3 diffuse = new Vec3(light.color
+				.times(anglecos)
+				.times(light.intensity)
+				.times(info.object.material.diffuse));
 		
-		// specular (a.k.a. glossy) reflection
+		/* specular (a.k.a. glossy) reflection */
 		// replace the line below by meaningful code
 		Vec3 specular = new Vec3();
 		
