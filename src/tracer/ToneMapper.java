@@ -20,6 +20,12 @@ public class ToneMapper {
 		// b = 
 		
 		// add code for color clamping below this line
+		if (r > 1.0f) r = 1.0f;
+		else if (r < 0.0f) r = 0.0f;
+		if (g > 1.0f) g = 1.0f;
+		else if (g < 0.0f) g = 0.0f;
+		if (b > 1.0f) b = 1.0f;
+		else if (b < 0.0f) b = 0.0f;
 
 		// convert to int
 		int intR = (int)( r*255.0f );
