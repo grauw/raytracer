@@ -47,8 +47,10 @@ public class Vec3 {
 	 * Vector addition. Returns a new Vec3 equal to this + that.
 	 */
 	public Vec3 add( Vec3 that ) {
-		// replace the line below by meaningful code
-		return new Vec3();	
+		return new Vec3( x + that.x
+		               , y + that.y
+		               , z + that.z
+		               );
 	}
 	/**
 	 * Multiplication by a scalar. Returns a new Vec3 equals to f * this.
@@ -63,13 +65,13 @@ public class Vec3 {
 	/**
 	 * Component-wise multiply
 	 */
-	 public Vec3 times( Vec3 that ) {
+	public Vec3 times( Vec3 that ) {
 	 	return new Vec3( x*that.x
 	 	               , y*that.y
 	 	               , z*that.z
 	 	               );
 	 	                 	
-	 }
+	}
 	
 	/**
 	 * Returns the length of this vector.
@@ -80,28 +82,30 @@ public class Vec3 {
 	public float length() {
 		return (float)Math.sqrt( lengthSquared() );
 	}
+	
 	/**
 	 * Return the square of the length of this vector.
 	 * @see length
 	 **/
 	public float lengthSquared() {
-		// replace the line below by meaningful code
-		return 0;
+		return (float) x*x + y*y + z*z;
 	}
 	
 	/**
-	 * Vector dot-product. Returns a new Vec3 equal to this dot that.
+	 * Vector dot-product. Returns a new float equal to this dot that.
 	 */
 	public float dot( Vec3 that ) {
-		// replace the line below by meaningful code
-		return 0;
+		return x*that.x + y*that.y + z*that.z;
 	}
+	
 	/**
 	 * Vector cross-product. Returns a new Vec3 equal to this cross that.
 	 */
-	public Vec3 cross( Vec3 b ) {
-		// replace the line below by meaningful code
-		return new Vec3();	
+	public Vec3 cross( Vec3 that ) {
+		return new Vec3( y*that.z - z*that.y
+		               , z*that.x - x*that.z
+		               , x*that.y - y*that.x
+		               );
 	}
 	
 	/**
@@ -123,6 +127,7 @@ public class Vec3 {
 		y = that.y;
 		z = that.z;
 	}
+	
 	/**
 	 * Constructor from floats.
 	 */
@@ -131,6 +136,7 @@ public class Vec3 {
 		this.y = y;
 		this.z = z;
 	}
+	
 	/**
 	 * Default constructor. Makes the vector (0,0,0)
 	 */
