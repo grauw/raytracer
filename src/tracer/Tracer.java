@@ -11,6 +11,7 @@ import java.io.IOException;
  * The main class. Displays the window and coordinates the raytracing.
  */
 public class Tracer extends Frame {
+	static final long serialVersionUID = 12345;
 	
 	public Tracer() {
 		addWindowListener(new WindowAdapter() {
