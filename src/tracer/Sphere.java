@@ -55,10 +55,14 @@ public class Sphere extends Traceable {
 		float x1 = -b - (float)Math.sqrt(D) / 2*a;
 		float x2 = -b + (float)Math.sqrt(D) / 2*a;	// TODO: optimize away when D=0...
 		
-		// TODO: check for negative values!
+		float l1 = r.direction.times(x1).lengthSquared();
+		float l2 = r.direction.times(x2).lengthSquared();
+		float x;
 		
-		float x = r.direction.times(x1).lengthSquared()
-				< r.direction.times(x2).lengthSquared() ? x1 : x2;
+		if (x1 >= 0 && x2 >= 0) x = l1 < l2 ? x1 : x2;
+		else if (x1 >= 0) x = x1;
+		else if (x2 >= 0) x = x2;
+		else return new IntersectionInfo(false);
 		
 		return new IntersectionInfo(
 				r.direction.times(x).minus(r.origin)
