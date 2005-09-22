@@ -19,7 +19,7 @@ sphere {
 
 	material {
 		color < 1, 0, 0 >
-		ambient 1
+		ambient 0.3
 	}
 
 }
@@ -32,7 +32,7 @@ sphere {
 
 	material {
 		color < 0.5, 1, 0.5 >
-		ambient 1
+		ambient 0.3
 	}
 
 }
