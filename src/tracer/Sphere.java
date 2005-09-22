@@ -38,39 +38,35 @@ public class Sphere extends Traceable {
 	}
 	
 	public IntersectionInfo intersect( Ray r ) {
-		// delete the line of code below, and properly compute if the Ray r hits the Spere, and if so, 
-		// record the nearest intersection point in the IntersectionInfo record, as well as the distance
-		// of this intersection point to the origin of the ray. Initially, you may put a zero normal vector
-		// in the IntersectionInfo, but as soon as we compute the local lighting model, you have to compute
-		// a proper normal vector of the sphere at the intersection point. 
-		
+		// calculate a, b and c coefficients of the quadratic formula
 		float a = r.direction.x*r.direction.x + r.direction.y*r.direction.y + r.direction.z*r.direction.z;
 		float b = 2*r.direction.x*(r.origin.x-origin.x) + 2*r.direction.y*(r.origin.y-origin.y)+ 2*r.direction.z*(r.origin.z-origin.z);
 		float c = (r.origin.x-origin.x)*(r.origin.x-origin.x) + (r.origin.y-origin.y)*(r.origin.y-origin.y) + (r.origin.z-origin.z)*(r.origin.z-origin.z) - radius*radius;
 		
+		// determinant
 		float D = b*b - 4*a*c;
 		
+		// if no intersection
 		if (D < 0) return new IntersectionInfo(false);
 		
-		float x1 = -b - (float)Math.sqrt(D) / 2*a;
-		float x2 = -b + (float)Math.sqrt(D) / 2*a;
+		// calculate possible scalars
+		float x1 = (-b - (float)Math.sqrt(D)) / (2*a);
+		float x2 = (-b + (float)Math.sqrt(D)) / (2*a);
 		
-		float l1 = r.direction.times(x1).lengthSquared();
-		float l2 = r.direction.times(x2).lengthSquared();
+		// choose smalles scalar > 0, or no intersection
 		float x;
-		
-		// if scalars both > 0, choose, else pick the one > 0. 
-		if (x1 >= 0 && x2 >= 0) x = l1 < l2 ? x1 : x2;
-		else if (x1 >= 0) x = x1;
-		else if (x2 >= 0) x = x2;
+		if      (x1 >= 0 && x1 < x2) x = x1;
+		else if (x2 >= 0 && x2 < x1) x = x2;
 		else return new IntersectionInfo(false);
 		
-		return new IntersectionInfo(
-				r.direction.times(x).add(r.origin)
-				, new Vec3()						// TODO: implement normal vector
-				, r.direction.times(x).length()
-				, this
-				);
+		// calculate location, normal and distance based on scalar
+		IntersectionInfo info = new IntersectionInfo(true);
+		info.location = r.direction.times(x).add(r.origin);
+		info.normal = info.location.minus(origin);
+		info.distance = r.direction.times(x).length();
+		info.object = this;
+		
+		return info;
 	}
 	
 	public boolean hit( Ray r ) {
