@@ -1,0 +1,59 @@
+/*
+ * Programming assignment 1, Graphics 2004/2005
+ * example scene 1
+ *
+ */
+
+// some settings
+width	400
+height	400
+gamma   1
+
+
+
+// red sphere, centered
+sphere {
+
+	origin	< 0, 0, -60 >
+	radius	20
+
+	material {
+		color < 1, 0, 0 >
+		ambient 1
+	}
+
+}
+
+// green sphere, more to the right and up, and partially behind the red sphere
+sphere {
+
+	origin	< 20, 20, -70 >
+	radius	20
+
+	material {
+		color < 0.5, 1, 0.5 >
+		ambient 1
+	}
+
+}
+
+
+camera {
+	origin < 0, 0, 0 >
+	window < -1, -1, 1, 1 >
+	near -1
+}
+
+
+// light in front
+light {
+	location < 40, 40, 0 >
+	color < 1, 1, 1 >
+	intensity 1
+}
+// light in the back
+light {
+	location < -10, 40, -80 >
+	color < .8, 0.2, 0.2 >
+	intensity 0.5
+}

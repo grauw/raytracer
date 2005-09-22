@@ -1,0 +1,91 @@
+/*
+ * Programming assignment 1, Graphics 2004/2005
+ * example scene 2: spheres and planes
+ *
+ */
+
+// some settings
+width	400
+height	400
+maxReflectionDepth 4
+gamma 1.0
+
+
+
+// ground plane
+plane {
+	normal < 0, 1, 0 >
+	offset 20
+
+	material {
+		color < 0.4, 0.4, 0.5 >
+		reflectance 0.1
+	}
+
+}
+// left wall
+plane {
+	normal < 1, 0, 0 >
+	offset 25
+
+	material {
+		color < 0.2, 0.8, 0.2 >
+		diffuse 0.5
+	}
+
+}
+// back wall
+plane {
+	normal < 0, 0, 1 >
+	offset 120
+
+	material {
+		COLOR < 0.2, 0.2, 0.8 >
+	}
+
+}
+
+
+
+// rode bal, half in de linker muur
+sphere {
+
+	origin	< -20, -5, -60 >
+	radius	19
+
+	material {
+		color < 1, 0, 0 >
+		reflectance 0.5
+	}
+
+}
+// witte bol in het midden
+sphere {
+
+	origin	< 25, -5, -60 >
+	radius	19
+
+	material {
+		color < 1, 1, 1 >
+		ambient 0
+		diffuse 0.4
+		specular 1
+		reflectance 0.8
+	}
+
+}
+
+
+
+// lamp vooraan
+light {
+	location <40, 40, 0>
+	color <1,1,1>
+	intensity 1
+}
+// lamp achteraan
+light {
+	location <-10, 40, -80>
+	color <0.8, 0.2, 0.2>
+	intensity 0.5
+}
