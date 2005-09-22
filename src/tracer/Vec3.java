@@ -88,7 +88,7 @@ public class Vec3 {
 	 * @see length
 	 **/
 	public float lengthSquared() {
-		return (float) x*x + y*y + z*z;
+		return x*x + y*y + z*z;
 	}
 	
 	/**
