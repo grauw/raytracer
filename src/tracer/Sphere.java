@@ -53,20 +53,21 @@ public class Sphere extends Traceable {
 		if (D < 0) return new IntersectionInfo(false);
 		
 		float x1 = -b - (float)Math.sqrt(D) / 2*a;
-		float x2 = -b + (float)Math.sqrt(D) / 2*a;	// TODO: optimize away when D=0...
+		float x2 = -b + (float)Math.sqrt(D) / 2*a;
 		
 		float l1 = r.direction.times(x1).lengthSquared();
 		float l2 = r.direction.times(x2).lengthSquared();
 		float x;
 		
+		// if scalars both > 0, choose, else pick the one > 0. 
 		if (x1 >= 0 && x2 >= 0) x = l1 < l2 ? x1 : x2;
 		else if (x1 >= 0) x = x1;
 		else if (x2 >= 0) x = x2;
 		else return new IntersectionInfo(false);
 		
 		return new IntersectionInfo(
-				r.direction.times(x).minus(r.origin)
-				, new Vec3()						// TODO: normal
+				r.direction.times(x).add(r.origin)
+				, new Vec3()						// TODO: implement normal vector
 				, r.direction.times(x).length()
 				, this
 				);
