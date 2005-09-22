@@ -44,9 +44,28 @@ public class Sphere extends Traceable {
 		// in the IntersectionInfo, but as soon as we compute the local lighting model, you have to compute
 		// a proper normal vector of the sphere at the intersection point. 
 		
+		float a = r.direction.x*r.direction.x + r.direction.y*r.direction.y + r.direction.z*r.direction.z;
+		float b = 2*r.direction.x*(r.origin.x-origin.x) + 2*r.direction.y*(r.origin.y-origin.y)+ 2*r.direction.z*(r.origin.z-origin.z);
+		float c = (r.origin.x-origin.x)*(r.origin.x-origin.x) + (r.origin.y-origin.y)*(r.origin.y-origin.y) + (r.origin.z-origin.z)*(r.origin.z-origin.z) - radius*radius;
 		
-		// For now, simply return "no hit". Replace the line below by meaningful code
-		return new IntersectionInfo(false);
+		float D = b*b - 4*a*c;
+		
+		if (D < 0) return new IntersectionInfo(false);
+		
+		float x1 = -b - (float)Math.sqrt(D) / 2*a;
+		float x2 = -b + (float)Math.sqrt(D) / 2*a;	// TODO: optimize away when D=0...
+		
+		// TODO: check for negative values!
+		
+		float x = r.direction.times(x1).lengthSquared()
+				< r.direction.times(x2).lengthSquared() ? x1 : x2;
+		
+		return new IntersectionInfo(
+				r.direction.times(x).minus(r.origin)
+				, new Vec3()						// TODO: normal
+				, r.direction.times(x).length()
+				, this
+				);
 	}
 	
 	public boolean hit( Ray r ) {
