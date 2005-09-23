@@ -102,7 +102,14 @@ public class Ray {
 	 *    @see trace.
 	 */
 	public boolean hit( Traceable ignoreObject ) {
-		// replace the line below by meaningful code
+		// test all Traceable object in the scene for collision.
+		Iterator i = Tracer.scene.iterator();
+		while( i.hasNext() ) {
+			Traceable t = (Traceable)i.next();
+			if( t != ignoreObject ) {
+				if (t.hit(this)) return true;
+			}
+		}
 		return false;
 	}
 	
