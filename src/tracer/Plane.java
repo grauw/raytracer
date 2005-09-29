@@ -40,14 +40,40 @@ public class Plane extends Traceable {
 	}
 	
 	public IntersectionInfo intersect( Ray r ) {
-		// replace this by meaningfull code
-		return new IntersectionInfo(false);
+		float x = intersectionScalar(r);
+		if (x < 0) return new IntersectionInfo(false);
+		
+		// calculate location, normal and distance based on scalar
+		IntersectionInfo info = new IntersectionInfo(true);
+		info.location = r.direction.times(x).add(r.origin);
+		info.normal = normal;
+		info.distance = r.direction.times(x).length();
+		info.object = this;
+		
+		return info;
 	}
 	
 	public boolean hit( Ray r ) {
-		// replace this by meaningfull code.
-		return false;
+		float x = intersectionScalar(r);
 		
+		// if no intersection with 0 <= scalar <= 1
+		if (0 <= x && x <= 1) return true;
+		
+		return false;
+	}
+	
+	private float intersectionScalar(Ray r) {
+		//(o - a*px - b*py - c*pz) / (a*vx + b*vy + c*vz) = t
+		float m = -offset;
+		m -= normal.x * r.origin.x;
+		m -= normal.y * r.origin.y;
+		m -= normal.z * r.origin.z;
+		float n = normal.x * r.direction.x;
+		n += normal.y * r.direction.y;
+		n += normal.z * r.direction.z;
+		float t = m / n;
+		
+		return t;
 	}
 	
 }
