@@ -15,9 +15,9 @@ public class ToneMapper {
 	public int map( float r, float g, float b ) {
 		
 		// apply gamma correction
-		// r = 
-		// g = 
-		// b = 
+		r = (float) Math.pow(r, invGamma);
+		g = (float) Math.pow(g, invGamma);
+		b = (float) Math.pow(b, invGamma);
 		
 		// add code for color clamping below this line
 		if (r > 1.0f) r = 1.0f;
