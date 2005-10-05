@@ -23,19 +23,23 @@ public class Ray {
 	public Vec3 localLight( IntersectionInfo info, Light light ) {
 		/* diffuse component */
 		// vector w towards light source
-		Vec3 lightvector = light.location.minus(info.location);
+		Vec3 lightvector = light.location.minus(info.location).normalize();
 		// cos ? = (v · w) / (|v| * |w|)
-		float anglecos = info.normal.dot(lightvector) /
-				(info.normal.length() * lightvector.length());
+		float ianglecos = info.normal.dot(lightvector);
+//		if (ianglecos < 0) ianglecos = 0;
 		// light color * angle * intensity * diffuse property
 		Vec3 diffuse = new Vec3(light.color
-				.times(anglecos)
+				.times(info.object.material.color)
 				.times(light.intensity)
+				.times(ianglecos)
 				.times(info.object.material.diffuse));
 		
 		/* specular (a.k.a. glossy) reflection */
-		// replace the line below by meaningful code
-		Vec3 specular = new Vec3();
+		Vec3 cameravector = direction.times(-1).normalize();
+		Vec3 h = lightvector.add(cameravector).normalize();
+		float shininess = info.object.material.specular *
+				(float) Math.pow( h.dot(info.normal), info.object.material.specularPower);
+		Vec3 specular = light.color.times(shininess);
 		
 		return diffuse.add( specular );
 	}
@@ -84,7 +88,15 @@ public class Ray {
 			}
 			
 			// global illumination: add recursively computed reflection below this line
-			
+			if (maxReflectionsLeft > 0 && nearestHit.object.material.reflectance > 0.0f) {
+				Vec3 cameravector = direction.times(-1).normalize();
+				// calculate reflection vector
+				Vec3 reflection = cameravector.times(-1).add(nearestHit.normal.times(cameravector.dot(nearestHit.normal)).times(2));
+				Ray r = new Ray(nearestHit.location, reflection); 
+				Vec3 reflectionColor = r.trace(nearestHit.object, maxReflectionsLeft - 1);
+				reflectionColor = reflectionColor.times(nearestHit.object.material.reflectance);
+				color = color.add(reflectionColor);
+			}
 			
 			return color;
 			
