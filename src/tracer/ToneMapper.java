@@ -27,6 +27,17 @@ public class ToneMapper {
 		if (b > 1.0f) b = 1.0f;
 		else if (b < 0.0f) b = 0.0f;
 
+/*		// alternative method...
+		float qq = Math.max(Math.max(r,g),b);
+		if (qq > 1) {
+			r = r / qq;
+			g = g / qq;
+			b = b / qq;
+		}
+		if (r < 0.0f) r = 0.0f;
+		if (g < 0.0f) g = 0.0f;
+		if (b < 0.0f) b = 0.0f;
+*/		
 		// convert to int
 		int intR = (int)( r*255.0f );
 		int intG = (int)( g*255.0f );
