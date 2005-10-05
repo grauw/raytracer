@@ -17,7 +17,7 @@ public class IntersectionInfo {
 	/**
 	 * Constructor indicating there was an intersection.
 	 * @param location The location of the intersection
-	 * @param normal The normal of the object at the point of intersection.
+	 * @param normal The normal of the object at the point of intersection (normalised).
 	 * @param distance The distance from ray origin to the intersection point.
 	 * @param object The object that was hit. Supply `this' here from the
 	 *    intersect method of your Traceable.

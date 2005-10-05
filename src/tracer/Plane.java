@@ -11,8 +11,7 @@ public class Plane extends Traceable {
 	float offset;
 	
 	public Plane( Vec3 n, float o ) {
-		normal = new Vec3(n);
-		normal.normalize();
+		normal = new Vec3(n).normalize();
 		offset = o;
 		material = new Material();
 	}

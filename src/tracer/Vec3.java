@@ -14,8 +14,7 @@ public class Vec3 {
 	 */
 	public static Vec3 random( float length ) {
 		Vec3 v = new Vec3( (float)Math.random(), (float)Math.random(), (float)Math.random() );
-		v.normalize();
-		v = v.times( length );
+		v = v.normalize().times( length );
 		return v;
 	}
 	
@@ -110,13 +109,14 @@ public class Vec3 {
 	
 	/**
 	 * Normalizes this vector.
-	 * Warning: this actually changes this instance, contrary to most methods.
+	 * Note: I modified this to *not* change this instance
 	 */
-	public void normalize() {
+	public Vec3 normalize() {
 		float invLength = 1.0f / length();
-		x *= invLength;
-		y *= invLength;
-		z *= invLength;
+		return new Vec3(
+				x *= invLength,
+				y *= invLength,
+				z *= invLength);
 	}
 	
 	/**

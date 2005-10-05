@@ -44,7 +44,7 @@ public class Sphere extends Traceable {
 		// calculate location, normal and distance based on scalar
 		IntersectionInfo info = new IntersectionInfo(true);
 		info.location = r.direction.times(x).add(r.origin);
-		info.normal = info.location.minus(origin);
+		info.normal = info.location.minus(origin).normalize();
 		info.distance = r.direction.times(x).length();
 		info.object = this;
 		
