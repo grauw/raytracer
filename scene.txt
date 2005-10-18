@@ -71,6 +71,8 @@ sphere {
 		diffuse 0.4
 		specular 1
 		reflectance 0.8
+		reflections 1
+		jitter 0
 	}
 
 }
@@ -93,3 +95,14 @@ light {
 	size 0
 	samples 1
 }
+
+
+camera {
+	origin < 0, 0, 0 >
+	window < -1, -1, 1, 1 >
+	near -1
+	target < 0, 0, -1 >
+	viewup < 0, 1, 0 >
+}
+
+
