@@ -15,6 +15,8 @@ public class Camera {
 		right = 1;
 		top = 1;
 		near = -1;
+		target = new Vec3(0, 0, -1);
+		viewUp = new Vec3(0, 1, 0);
 	}
 	
 	public Vec3 origin;
@@ -23,6 +25,8 @@ public class Camera {
 	public float right;
 	public float top;
 	public float near;
+	public Vec3 target;
+	public Vec3 viewUp;
 
 	public void parse( Parser p ) throws IOException {
 		p.parseKeyword( "{" );
@@ -42,6 +46,22 @@ public class Camera {
 				p.parseKeyword( ">" );
 			} else if( p.tryKeyword("near") ) {
 				near = p.parseFloat();
+			} else if( p.tryKeyword("target") ) {
+				p.parseKeyword( "<" );
+				target.x = p.parseFloat();
+				p.parseKeyword( "," );
+				target.y = p.parseFloat();
+				p.parseKeyword( "," );
+				target.z = p.parseFloat();
+				p.parseKeyword( ">" );
+			} else if( p.tryKeyword("viewup") ) {
+				p.parseKeyword( "<" );
+				viewUp.x = p.parseFloat();
+				p.parseKeyword( "," );
+				viewUp.y = p.parseFloat();
+				p.parseKeyword( "," );
+				viewUp.z = p.parseFloat();
+				p.parseKeyword( ">" );
 
 			} else {
 				System.out.println( p.tokenWasUnexpected() );	

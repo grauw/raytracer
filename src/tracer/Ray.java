@@ -81,15 +81,16 @@ public class Ray {
 			while( lightIter.hasNext() ) {
 				Light light = (Light)lightIter.next();
 				Vec3 shadowFeelerDirection = light.location.minus( nearestHit.location );
-				Vec3 softColor = new Vec3();
+				Vec3 color2 = new Vec3();
+				// multiple randomised shadow feelers (area lights)
 				for (int j=0; j<light.numSamples; j++) {
 					Ray shadowFeeler = new Ray( nearestHit.location,
 							shadowFeelerDirection.add(Vec3.random(light.size)));
 					if( !shadowFeeler.hit( nearestHit.object ) ) {
-						softColor = softColor.add(  localLight( nearestHit, light )  );
+						color2 = color2.add(  localLight( nearestHit, light )  );
 					}
 				}
-				color = color.add(softColor.times(1.0f / light.numSamples));
+				color = color.add(color2.times(1.0f / light.numSamples));
 			}
 			
 			// global illumination: add recursively computed reflection below this line
@@ -97,10 +98,16 @@ public class Ray {
 				Vec3 cameravector = direction.times(-1).normalize();
 				// calculate reflection vector
 				Vec3 reflection = cameravector.times(-1).add(nearestHit.normal.times(cameravector.dot(nearestHit.normal)).times(2));
-				Ray r = new Ray(nearestHit.location, reflection); 
-				Vec3 reflectionColor = r.trace(nearestHit.object, maxReflectionsLeft - 1);
-				reflectionColor = reflectionColor.times(nearestHit.object.material.reflectance);
-				color = color.add(reflectionColor);
+				Vec3 color2 = new Vec3();
+				// multiple randomised reflections (monte carlo global illumination)
+				for (int j=0; j<nearestHit.object.material.numReflections; j++) {
+					Ray r = new Ray(nearestHit.location,
+							reflection.add(Vec3.random(reflection.length() * nearestHit.object.material.reflectionJitter))); 
+					Vec3 reflectionColor = r.trace(nearestHit.object, maxReflectionsLeft - 1);
+					reflectionColor = reflectionColor.times(nearestHit.object.material.reflectance);
+					color2 = color2.add(reflectionColor);
+				}
+				color = color.add(color2.times(1.0f / nearestHit.object.material.numReflections));
 			}
 			
 			return color;
