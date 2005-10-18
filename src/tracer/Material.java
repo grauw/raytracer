@@ -14,6 +14,8 @@ public class Material {
 		specular = 0.0f;
 		specularPower = 16.0f;
 		reflectance = 0.0f;
+		reflectionJitter = 0.0f;
+		numReflections = 1;
 	}
 	
 	public Vec3 color;	
@@ -22,6 +24,8 @@ public class Material {
 	public float specular;
 	public float specularPower;
 	public float reflectance;
+	public float reflectionJitter;
+	public int numReflections;
 	
 	public void parse( Parser p ) throws IOException {
 		p.parseKeyword( "{" );
@@ -39,6 +43,10 @@ public class Material {
 				specularPower = p.parseFloat();
 			} else if( p.tryKeyword("reflectance") ) {
 				reflectance = p.parseFloat();
+			} else if( p.tryKeyword("reflections") ) {
+				numReflections = (int) p.parseFloat();
+			} else if( p.tryKeyword("jitter") ) {
+				reflectionJitter = p.parseFloat();
 			} else {
 				System.out.println( p.tokenWasUnexpected() );	
 			}

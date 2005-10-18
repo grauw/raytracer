@@ -134,6 +134,25 @@ public class Tracer extends Frame {
 				camera.left + ((x + 0.5f) / width) * (camera.right - camera.left),
 				camera.bottom + ((y + 0.5f) / height) * (camera.top - camera.bottom),
 				camera.near);
+		
+		// construct translation matrix for camera direction
+		Vec3 w = camera.target.normalize();
+		w.z = w.z*-1;
+		w = w.normalize();
+		Vec3 u = camera.viewUp.cross(w).normalize();
+		Vec3 v = w.cross(u);
+		Mat4 M1 = new Mat4(new Vec4(u), new Vec4(v), new Vec4(w), new Vec4(0,0,0,1));
+		Mat4 M2 = new Mat4();
+		M2.r1.w = -camera.origin.x;
+		M2.r2.w = -camera.origin.y;
+		M2.r3.w = -camera.origin.z;
+		Mat4 Mv = M2.times(M1);
+		
+		Vec4 temp = Mv.transform(new Vec4(direction));
+		direction.x = temp.x;
+		direction.y = temp.y;
+		direction.z = temp.z;
+		
 		Ray r = new Ray( camera.origin, direction );
 		return r.trace( null, maxReflectionDepth );
 		
