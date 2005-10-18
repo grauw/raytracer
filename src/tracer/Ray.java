@@ -81,10 +81,15 @@ public class Ray {
 			while( lightIter.hasNext() ) {
 				Light light = (Light)lightIter.next();
 				Vec3 shadowFeelerDirection = light.location.minus( nearestHit.location );
-				Ray shadowFeeler = new Ray( nearestHit.location, shadowFeelerDirection );
-				if( !shadowFeeler.hit( nearestHit.object ) ) {
-					color = color.add(  localLight( nearestHit, light )  );
+				Vec3 softColor = new Vec3();
+				for (int j=0; j<light.numSamples; j++) {
+					Ray shadowFeeler = new Ray( nearestHit.location,
+							shadowFeelerDirection.add(Vec3.random(light.size)));
+					if( !shadowFeeler.hit( nearestHit.object ) ) {
+						softColor = softColor.add(  localLight( nearestHit, light )  );
+					}
 				}
+				color = color.add(softColor.times(1.0f / light.numSamples));
 			}
 			
 			// global illumination: add recursively computed reflection below this line
