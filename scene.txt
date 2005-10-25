@@ -77,7 +77,17 @@ sphere {
 
 }
 
+triangle {
 
+	vertice1 < 25, -5, -60 >
+	vertice2 < -20, -5, -60 >
+	vertice3 < 5, -20, -30 >
+
+	material {
+		COLOR < 0.2, 0.2, 0.8 >
+	}
+
+}
 
 // lamp vooraan
 light {
