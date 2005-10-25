@@ -16,6 +16,8 @@ public class Material {
 		reflectance = 0.0f;
 		reflectionJitter = 0.0f;
 		numReflections = 1;
+		refraction = 0.0f;
+		refractionIndex = 1.0f;
 	}
 	
 	public Vec3 color;	
@@ -26,6 +28,8 @@ public class Material {
 	public float reflectance;
 	public float reflectionJitter;
 	public int numReflections;
+	public float refraction;
+	public float refractionIndex;
 	
 	public void parse( Parser p ) throws IOException {
 		p.parseKeyword( "{" );
@@ -47,6 +51,10 @@ public class Material {
 				numReflections = (int) p.parseFloat();
 			} else if( p.tryKeyword("jitter") ) {
 				reflectionJitter = p.parseFloat();
+			} else if( p.tryKeyword("refraction") ) {
+				refraction = p.parseFloat();
+			} else if( p.tryKeyword("refractionindex") ) {
+				refractionIndex = p.parseFloat();
 			} else {
 				System.out.println( p.tokenWasUnexpected() );	
 			}

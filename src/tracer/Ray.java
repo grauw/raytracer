@@ -94,20 +94,42 @@ public class Ray {
 			}
 			
 			// global illumination: add recursively computed reflection below this line
-			if (maxReflectionsLeft > 0 && nearestHit.object.material.reflectance > 0.0f) {
+			if (maxReflectionsLeft > 0 && material.reflectance > 0.0f) {
 				Vec3 cameravector = direction.times(-1).normalize();
 				// calculate reflection vector
 				Vec3 reflection = cameravector.times(-1).add(nearestHit.normal.times(cameravector.dot(nearestHit.normal)).times(2));
 				Vec3 color2 = new Vec3();
 				// multiple randomised reflections (monte carlo global illumination)
-				for (int j=0; j<nearestHit.object.material.numReflections; j++) {
+				for (int j=0; j < material.numReflections; j++) {
 					Ray r = new Ray(nearestHit.location,
 							reflection.add(Vec3.random(reflection.length() * nearestHit.object.material.reflectionJitter))); 
 					Vec3 reflectionColor = r.trace(nearestHit.object, maxReflectionsLeft - 1);
-					reflectionColor = reflectionColor.times(nearestHit.object.material.reflectance);
+					reflectionColor = reflectionColor.times(material.reflectance);
 					color2 = color2.add(reflectionColor);
 				}
-				color = color.add(color2.times(1.0f / nearestHit.object.material.numReflections));
+				color = color.add(color2.times(1.0f / material.numReflections));
+			}
+			
+			// refraction
+			if (material.refraction > 0) {
+				Vec3 refractionColor;
+				Vec3 dirnorm = direction.normalize();
+				Vec3 normal = nearestHit.normal;
+				float costheta = dirnorm.dot(normal);
+				float ls = 1.0f;
+				float lt = material.refractionIndex;
+				// calculate refracted direction
+				float cos2phi = 1 - (ls*ls*(1 - costheta*costheta)/lt/lt);
+				if (cos2phi < 0) {
+					refractionColor = new Vec3(1,1,1);
+				} else {
+					Vec3 xx = dirnorm.minus(normal.times(costheta)).times(ls/lt);
+					Vec3 refractionDirection = xx.minus(normal.times((float) Math.sqrt(cos2phi)));
+					Ray refraction = new Ray(nearestHit.location, refractionDirection);
+					refractionColor = refraction.trace(nearestHit.object, maxReflectionsLeft - 1);
+				}
+				color = color.times(1 - material.refraction);
+				color = color.add(refractionColor.times(material.refraction));
 			}
 			
 			return color;
