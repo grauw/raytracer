@@ -86,8 +86,8 @@ public class Sphere extends Traceable {
 		float x2 = (-b + (float)Math.sqrt(D)) / (2*a);
 		
 		// choose smallest scalar > 0, or no intersection
-		if      (x1 >= 0 && x1 < x2) return x1;
-		else if (x2 >= 0 && x2 < x1) return x2;
+		if (x1 >= 0 && (x1 < x2 || x2 < 0)) return x1;
+		else if (x2 >= 0) return x2;
 		else return Float.NEGATIVE_INFINITY;
 	}
 	
