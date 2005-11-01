@@ -42,8 +42,8 @@ public class Triangle extends Traceable {
 	
 	public IntersectionInfo intersect( Ray r ) {
 		float x = intersectionScalar(r);
-		if (x < -1000) return new IntersectionInfo(false);
-	
+		if (x < 0) return new IntersectionInfo(false);
+		
 		IntersectionInfo info = new IntersectionInfo(true);
 		info.location = r.direction.times(x).add(r.origin);
 		info.normal = (vertice2.minus(vertice1)).cross(vertice3.minus(vertice1)).normalize();
@@ -66,7 +66,7 @@ public class Triangle extends Traceable {
 	private float intersectionScalar(Ray r) {
 	
 		float a, b, c, d, e, f, g, h, i, j, k, l;
-		double beta, gamma, t, m;
+		double beta, gamma, t, M;
 		
 		a = vertice1.x - vertice2.x; d = vertice1.x - vertice3.x; g = r.direction.x;
 		b = vertice1.y - vertice2.y; e = vertice1.y - vertice3.y; h = r.direction.y;
@@ -76,15 +76,15 @@ public class Triangle extends Traceable {
 		k = vertice1.y - r.origin.y;
 		l = vertice1.z - r.origin.z;
 		
-		m = a * (e*i - h*f) + b * (g*f - d*i) + c * (d*h - e*g);
+		M = a * (e*i - h*f) + b * (g*f - d*i) + c * (d*h - e*g);
 		
-		beta  = ( j * (e*i - h*f) + k * (g*f - d*i) + l * (d*h - e*g) ) / m ;
-		gamma = ( i * (a*k - j*b) + h * (j*c - a*l) + g * (b*l - k*c) ) / m ;
-		t	  = ( f * (a*k - j*b) + e * (j*c - a*l) + d * (b*l - k*c) ) / m ;
+		beta  = ( j * (e*i - h*f) + k * (g*f - d*i) + l * (d*h - e*g) ) / M ;
+		gamma = ( i * (a*k - j*b) + h * (j*c - a*l) + g * (b*l - k*c) ) / M ;
+		t	  = -( f * (a*k - j*b) + e * (j*c - a*l) + d * (b*l - k*c) ) / M ;
 		
-		if ( beta > 0 && gamma > 0 && beta+gamma < 1 ) return (float) t;
-		else return Float.NEGATIVE_INFINITY;
-
+		if ( gamma < 0 || gamma > 1) return Float.NEGATIVE_INFINITY;
+		if ( beta < 0 || beta > (1 - gamma)) return Float.NEGATIVE_INFINITY;
+		else return (float) t;
 	}
 	
 }
