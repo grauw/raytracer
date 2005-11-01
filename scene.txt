@@ -41,7 +41,7 @@ plane {
 	offset 120
 
 	material {
-		COLOR < 0.2, 0.2, 0.8 >
+		color < 0.2, 0.2, 0.8 >
 	}
 
 }
@@ -85,7 +85,7 @@ triangle {
 	vertice2 < -20, -5, -60 >
 
 	material {
-		COLOR < 0.2, 0.2, 0.8 >
+		color < 0.2, 0.2, 0.8 >
 	}
 
 }
