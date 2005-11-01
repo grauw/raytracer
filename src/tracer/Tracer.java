@@ -129,28 +129,18 @@ public class Tracer extends Frame {
 	
 	public Vec3 subPixel( int x, int y ) {
 		
-		  int i,j;
-		  float sampleRoot = 2;
-		  float v = 1.0f, u = 1.0f;
-		  float x_center = 0, y_center = 0;
-		  float s = 2 * sampleRoot;
-		  Vec3 avgColor = new Vec3();
-
-		  for (i = 1; i <= sampleRoot; i++ ) {
-			v = 1.0f;  
-		  	for (j = 1; j <= sampleRoot; j++ ) {
-				x_center = u/s;
-				y_center = v/s;
-		        v = v + 2;
-		        avgColor = avgColor.add( tracePixel( x, y, x_center, y_center ) );
-		 	}
-			u = u + 2;
-		  }
+		float sampleRoot = camera.sampleRoot;
+		float samples = sampleRoot * sampleRoot;
+		float u = 1.0f / (sampleRoot + 1), v = 1.0f / (sampleRoot + 1);
+		Vec3 avgColor = new Vec3();
 		
-		  return new Vec3( (avgColor.x / s), 
-				  		   (avgColor.y / s),
-				  		   (avgColor.z / s) );
-
+		for (int i = 1; i <= sampleRoot; i++ ) {
+			for (int j = 1; j <= sampleRoot; j++ ) {
+				avgColor = avgColor.add( tracePixel( x, y, i * u, j * v ) );
+			}
+		}
+		
+		return avgColor.times(1 / samples);
 	}
 	
 	/**

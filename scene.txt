@@ -142,6 +142,7 @@ camera {
 	near -1
 	target < 0, 0, -1 >
 	viewup < 0, 1, 0 >
+	sampleroot 1
 }
 
 
