@@ -1,5 +1,4 @@
 package tracer;
-import java.io.IOException;
 
 /**
  * Represents a 4x4 matrix.
