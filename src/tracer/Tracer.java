@@ -115,7 +115,7 @@ public class Tracer extends Frame {
 			for( int x=0; x<width; ++x ) {
 		
 				int index = (height-y-1)*width + x;
-				Vec3 color = tracePixel( x, y );
+				Vec3 color = subPixel( x, y );
 				pixelBuffer[ index ] = toneMapper.map( color.x, color.y, color.z );
 				
 				
@@ -126,10 +126,11 @@ public class Tracer extends Frame {
 		System.out.println( "Finished raytracing." );
 		
 	}
-	/*
+	
 	public Vec3 subPixel( int x, int y ) {
 		
 		  int i,j;
+		  float sampleRoot = 2;
 		  float v = 1.0f, u = 1.0f;
 		  float x_center = 0, y_center = 0;
 		  float s = 2 * sampleRoot;
@@ -146,22 +147,22 @@ public class Tracer extends Frame {
 			u = u + 2;
 		  }
 		
-		  return new Vec3( (avgColor.x / sampleRoot), 
-				  		   (avgColor.y / sampleRoot),
-				  		   (avgColor.z / sampleRoot) );
+		  return new Vec3( (avgColor.x / s), 
+				  		   (avgColor.y / s),
+				  		   (avgColor.z / s) );
 
 	}
-	*/
+	
 	/**
 	 * Given (x,y) coordinates of the pixel to be traced, constructs the primary
 	 * ray, raytraces it (by calling Ray.trace) and returns the result (the
 	 * color for the pixel).
 	 */
-	public Vec3 tracePixel( int x, int y ) {
+	public Vec3 tracePixel( int x, int y, float a, float b ) {
 		// compute a ray from the origin of the camera through the center of pixel (x,y)
 		Vec3 direction = new Vec3(
-				camera.left + ((x + 0.5f) / width) * (camera.right - camera.left),
-				camera.bottom + ((y + 0.5f) / height) * (camera.top - camera.bottom),
+				camera.left + ((x + a) / width) * (camera.right - camera.left),
+				camera.bottom + ((y + b) / height) * (camera.top - camera.bottom),
 				camera.near);
 		
 		// construct translation matrix for camera direction
