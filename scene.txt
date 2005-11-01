@@ -76,19 +76,19 @@ sphere {
 	}
 
 }
-
+/*
 triangle {
 
 	vertice1 < 25, -5, -60 >
-	vertice2 < -20, -5, -60 >
 	vertice3 < 5, -20, -30 >
+	vertice2 < -20, -5, -60 >
 
 	material {
 		COLOR < 0.2, 0.2, 0.8 >
 	}
 
 }
-
+*/
 
 // witte bol in het midden
 sphere {
@@ -114,27 +114,6 @@ sphere {
 		refraction 1
 		refractionindex 1.33
 	}
-}*/
-/* NOTE: this is supposed to be the refraction method
-if (p is on a dielectric) {
-	r = reflect(d, n)
-	if (d . n < 0) {
-		refract(d, n, ls, t)
-		c = -d . n
-		kr = kg = kb = 1
-	} else {
-		kr = exp(-ar*t’)
-		kg = exp(-ag*t’)
-		kb = exp(-ab*t’)
-		if refract(d, -n, 1/ls, t) {
-			c = t . n
-		} else {
-			return k*color(p + t’r)
-		}
-	}
-	R0 = (ls-1)^2/(ls+1)^2
-	R = R0 + (1-R0)(1-c)^5
-	return k(R color(p+t’*r) + (1-R) color(p+t’*t)
 }*/
 
 

@@ -97,7 +97,7 @@ public class Ray {
 			if (maxReflectionsLeft > 0 && material.reflectance > 0.0f) {
 				Vec3 cameravector = direction.times(-1).normalize();
 				// calculate reflection vector
-				Vec3 reflection = cameravector.times(-1).add(nearestHit.normal.times(cameravector.dot(nearestHit.normal)).times(2));
+				Vec3 reflection = reflect(cameravector, nearestHit.normal);
 				Vec3 color2 = new Vec3();
 				// multiple randomised reflections (monte carlo global illumination)
 				for (int j=0; j < material.numReflections; j++) {
@@ -112,21 +112,39 @@ public class Ray {
 			
 			// refraction
 			if (material.refraction > 0) {
-				Vec3 refractionColor;
-				Vec3 dirnorm = direction.normalize();
+				Vec3 refractionColor = null;
+				Vec3 trans = new Vec3();
+				Vec3 k;										// light attenuation factor
+				float c = 0;
+				Vec3 incidence = direction.normalize();
 				Vec3 normal = nearestHit.normal;
-				float costheta = dirnorm.dot(normal);
-				float ls = 1.0f;
-				float lt = material.refractionIndex;
-				// calculate refracted direction
-				float cos2phi = 1 - (ls*ls*(1 - costheta*costheta)/lt/lt);
-				if (cos2phi < 0) {
-					refractionColor = new Vec3(1,1,1);
-				} else {
-					Vec3 xx = dirnorm.minus(normal.times(costheta)).times(ls/lt);
-					Vec3 refractionDirection = xx.minus(normal.times((float) Math.sqrt(cos2phi)));
-					Ray refraction = new Ray(nearestHit.location, refractionDirection);
-					refractionColor = refraction.trace(nearestHit.object, maxReflectionsLeft - 1);
+				Vec3 refl = reflect(incidence.times(-1), normal);	// reflection vector
+				// if from air into object
+				if (incidence.dot(normal) < 0) {
+					refract(incidence, normal, material.refraction, trans);
+					c = incidence.times(-1).dot(normal);	// cos theta
+					k = new Vec3(1,1,1);
+				}
+				// if from object into air
+				else {
+					k = new Vec3(1,1,1);
+					if (refract(incidence, normal.times(-1), 1/material.refraction, trans)) {
+						c = trans.dot(normal);				// cos phi
+					} else {
+						Ray reflRay = new Ray(nearestHit.location, refl); 
+						refractionColor = k.times(reflRay.trace(nearestHit.object, maxReflectionsLeft - 1));
+					}
+				}
+				if (refractionColor == null) {
+					float R0 = ((material.refraction - 1)*(material.refraction - 1)) /
+			           ((material.refraction - 1)*(material.refraction + 1));
+					float R = (float) (R0 + (1 - R0)*Math.pow(1 - c, 5));
+					
+					Ray reflRay = new Ray(nearestHit.location, refl); 
+					Vec3 reflColor = reflRay.trace(nearestHit.object, maxReflectionsLeft - 1);
+					Ray transRay = new Ray(nearestHit.location, trans); 
+					Vec3 transColor = transRay.trace(nearestHit.object, maxReflectionsLeft - 1);
+					refractionColor = k.times(reflColor.times(R).add(transColor.times(1-R)));
 				}
 				color = color.times(1 - material.refraction);
 				color = color.add(refractionColor.times(material.refraction));
@@ -141,6 +159,30 @@ public class Ray {
 		}
 		
 	}
+	
+	// calculate reflection ray, given incidence & normal (both normalised)
+	private Vec3 reflect(Vec3 incidence, Vec3 normal) {
+		return incidence.times(-1).add(normal.times(incidence.dot(normal)).times(2));
+	}
+	
+	// return false if total internal reflaction,
+	private boolean refract(Vec3 incidence, Vec3 normal, float ls, Vec3 trans) {
+		float lt = 1.0f;
+		float costheta = incidence.times(-1).dot(normal);
+		// calculate refracted direction
+		float cos2phi = 1 - (ls*ls*(1 - costheta*costheta)/(lt*lt));
+		if (cos2phi < 0) {
+			return false;
+		} else {
+			Vec3 xx = incidence.minus(normal.times(costheta)).times(ls/lt);
+			Vec3 t = xx.minus(normal.times((float) Math.sqrt(cos2phi)));
+			trans.x = t.x;
+			trans.y = t.y;
+			trans.z = t.z;
+			return true;
+		}
+	}
+	
 	
 	/**
 	 * Checks if the ray (origin + t*direction) hits the scene with 0 <= t <= 1.
