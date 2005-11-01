@@ -8,7 +8,7 @@ import java.io.IOException;
 public class Material {
 	
 	public Material() {
-		color = new Vec3( 1, 1, 1 );	
+		color = new Vec3( 1, 1, 1 );
 		ambient = 0.2f;
 		diffuse	= 0.8f;
 		specular = 0.0f;
@@ -18,6 +18,7 @@ public class Material {
 		numReflections = 1;
 		refraction = 0.0f;
 		refractionIndex = 1.0f;
+		perlin = color;
 	}
 	
 	public Vec3 color;	
@@ -30,6 +31,7 @@ public class Material {
 	public int numReflections;
 	public float refraction;
 	public float refractionIndex;
+	public Vec3 perlin;
 	
 	public void parse( Parser p ) throws IOException {
 		p.parseKeyword( "{" );
@@ -37,6 +39,7 @@ public class Material {
 			
 			if( p.tryKeyword("color") ) {
 				color.parse( p );
+				perlin = color;
 			} else if( p.tryKeyword("ambient") ) {
 				ambient = p.parseFloat();
 			} else if( p.tryKeyword("diffuse") ) {
@@ -55,6 +58,10 @@ public class Material {
 				refraction = p.parseFloat();
 			} else if( p.tryKeyword("refractionindex") ) {
 				refractionIndex = p.parseFloat();
+			} else if( p.tryKeyword("perlin") ) {
+				color.parse( p );
+				perlin = new Vec3();
+				perlin.parse( p );
 			} else {
 				System.out.println( p.tokenWasUnexpected() );	
 			}

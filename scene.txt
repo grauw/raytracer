@@ -18,7 +18,8 @@ plane {
 	offset 20
 
 	material {
-		color < 0.4, 0.4, 0.5 >
+//		color < 0.4, 0.4, 0.5 >
+		perlin < 0.4, 0.4, 0.5 > < 1.0, 1.0, 1.0 >
 		reflectance 0.1
 	}
 
@@ -99,7 +100,7 @@ sphere {
 		color < 1, 1, 1 >
 		ambient 0
 		refraction 0.5
-		refractionindex 0.8
+		refractionindex 1.59
 	}
 }
 
