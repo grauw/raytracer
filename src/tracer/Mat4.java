@@ -48,7 +48,7 @@ public class Mat4 {
 		float a1, a2, a3, a4, b1, b2, b3, b4;
 	    float c1, c2, c3, c4, d1, d2, d3, d4;
 	    double det;
-	    Mat4 adj = new Mat4();
+	    Mat4 adj;
 
 	    adj = adjoint( this );
 	    det = det4x4( this );
@@ -93,7 +93,7 @@ public class Mat4 {
 		r4 = new Vec4( 0, 0, 0, 1 );
 	}
 	
-public Mat4 adjoint( Mat4 m ) {
+	public Mat4 adjoint( Mat4 m ) {
 	
 	    double a1, a2, a3, a4, b1, b2, b3, b4;
 	    double c1, c2, c3, c4, d1, d2, d3, d4;
