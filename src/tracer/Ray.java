@@ -95,9 +95,9 @@ public class Ray {
 			
 			// global illumination: add recursively computed reflection below this line
 			if (maxReflectionsLeft > 0 && material.reflectance > 0.0f) {
-				Vec3 cameravector = direction.times(-1).normalize();
+				Vec3 incidence = direction.normalize();
 				// calculate reflection vector
-				Vec3 reflection = reflect(cameravector, nearestHit.normal);
+				Vec3 reflection = reflect(incidence, nearestHit.normal);
 				Vec3 color2 = new Vec3();
 				// multiple randomised reflections (monte carlo global illumination)
 				for (int j=0; j < material.numReflections; j++) {
@@ -112,39 +112,53 @@ public class Ray {
 			
 			// refraction
 			if (material.refraction > 0) {
-				Vec3 refractionColor = null;
-				Vec3 trans = new Vec3();
-				Vec3 k;										// light attenuation factor
+				Vec3 refractionColor = null;	// final colour of refraction
+				Vec3 trans = new Vec3();		// transmitted vector (filled in later)
+				Vec3 k;							// light attenuation factor (not implemented)
 				float c = 0;
-				Vec3 incidence = direction.normalize();
-				Vec3 normal = nearestHit.normal;
-				Vec3 refl = reflect(incidence.times(-1), normal);	// reflection vector
+				Vec3 incidence = direction.normalize();	// incidence light vector
+				Vec3 normal = nearestHit.normal;		// normal vector
+				Vec3 refl = reflect(incidence, normal);	// reflection vector
+				boolean full_reflectance = false;
+				
 				// if from air into object
 				if (incidence.dot(normal) < 0) {
-					refract(incidence, normal, material.refraction, trans);
-					c = incidence.times(-1).dot(normal);	// cos theta
+					if (!refract(incidence, normal, material.refractionIndex, trans)) {
+						full_reflectance = true;
+					} else {
+						c = incidence.times(-1).dot(normal);	// cos theta
+					}
 					k = new Vec3(1,1,1);
 				}
 				// if from object into air
 				else {
 					k = new Vec3(1,1,1);
-					if (refract(incidence, normal.times(-1), 1/material.refraction, trans)) {
-						c = trans.dot(normal);				// cos phi
+					if (refract(incidence, normal.times(-1), 1/material.refractionIndex, trans)) {
+						c = trans.dot(normal);				// cos 180-phi
 					} else {
 						Ray reflRay = new Ray(nearestHit.location, refl); 
 						refractionColor = k.times(reflRay.trace(nearestHit.object, maxReflectionsLeft - 1));
 					}
 				}
+				// if no refrectionColor determined earlier
 				if (refractionColor == null) {
-					float R0 = ((material.refraction - 1)*(material.refraction - 1)) /
-			           ((material.refraction - 1)*(material.refraction + 1));
-					float R = (float) (R0 + (1 - R0)*Math.pow(1 - c, 5));
-					
-					Ray reflRay = new Ray(nearestHit.location, refl); 
+					Ray reflRay = new Ray(nearestHit.location, refl);
 					Vec3 reflColor = reflRay.trace(nearestHit.object, maxReflectionsLeft - 1);
-					Ray transRay = new Ray(nearestHit.location, trans); 
-					Vec3 transColor = transRay.trace(nearestHit.object, maxReflectionsLeft - 1);
-					refractionColor = k.times(reflColor.times(R).add(transColor.times(1-R)));
+					
+					// if full reflectance
+					if (full_reflectance) {
+						refractionColor = reflColor;
+					}
+					else
+					{
+						// add a bit to the transmitted ray to avoid infinite reflections
+						Ray transRay = new Ray(nearestHit.location.add(trans.times(0.0001f)), trans);
+						Vec3 transColor = transRay.trace(null, maxReflectionsLeft - 1);
+						float R0 = (material.refractionIndex - 1) / (material.refractionIndex + 1);
+						R0 = R0*R0;
+						float R = R0 + (1 - R0) * (float)Math.pow(1 - c, 5);
+						refractionColor = k.times(reflColor.times(R).add(transColor.times(1-R)));
+					}
 				}
 				color = color.times(1 - material.refraction);
 				color = color.add(refractionColor.times(material.refraction));
@@ -160,15 +174,25 @@ public class Ray {
 		
 	}
 	
-	// calculate reflection ray, given incidence & normal (both normalised)
+	/** Calculate reflection vector
+	 * @param incidence Light incidence vector (normalised)
+	 * @param normal Normal vector (normalised)
+	 * @return reflection vector
+	 */
 	private Vec3 reflect(Vec3 incidence, Vec3 normal) {
-		return incidence.times(-1).add(normal.times(incidence.dot(normal)).times(2));
+		return incidence.add(normal.times(incidence.times(-1).dot(normal)).times(2));
 	}
 	
-	// return false if total internal reflaction,
-	private boolean refract(Vec3 incidence, Vec3 normal, float ls, Vec3 trans) {
-		float lt = 1.0f;
-		float costheta = incidence.times(-1).dot(normal);
+	/** Calculate refraction vector
+	 * @param incidence Light incidence vector (normalised)
+	 * @param normal Normal vector (normalised)
+	 * @param lt Transmission object refraction index
+	 * @param trans [output] Vec3 object to contain vector
+	 * @return false if total internal refraction 
+	 */
+	private boolean refract(Vec3 incidence, Vec3 normal, float lt, Vec3 trans) {
+		float ls = 1.0f;
+		float costheta = incidence.dot(normal);
 		// calculate refracted direction
 		float cos2phi = 1 - (ls*ls*(1 - costheta*costheta)/(lt*lt));
 		if (cos2phi < 0) {

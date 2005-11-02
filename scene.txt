@@ -99,7 +99,7 @@ sphere {
 	material {
 		color < 1, 1, 1 >
 		ambient 0
-		refraction 0.5
+		refraction 0.95
 		refractionindex 1.59
 	}
 }
