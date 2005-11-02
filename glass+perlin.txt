@@ -1,0 +1,131 @@
+/*
+ * Programming assignment 2, Graphics 2005/2006
+ * example scene: glass and metal spheres, perlin noise
+ *
+ */
+
+// some settings
+width	800
+height	800
+maxReflectionDepth 10
+gamma 1.0
+
+camera {
+	sampleRoot 4
+}
+
+
+
+// ground plane
+plane {
+	normal < 0, 1, 0 >
+	offset 30
+
+	material {
+		perlin < 0.5, 0.5, 0.3 > < 0.6, 0.6, 0.4 >
+		reflectance 0.1
+		ambient 0.3
+	}
+
+}
+
+
+// left wall
+plane {
+	normal < 1, 0, 0 >
+	offset 51
+
+	material {
+		color < 0.8, 0.8, 0.8 >
+		diffuse 1
+		ambient 0.5
+	}
+
+}
+
+
+// back wall
+plane {
+	normal < 0, 0, 1 >
+	offset 150
+
+	material {
+		color < 1, 1, 1 >
+	}
+
+}
+
+
+//  wall behind camera
+plane {
+	normal < 0, 0, -1 >
+	offset 120
+
+	material {
+		color < 1, 1, 0 >
+	}
+
+}
+
+
+
+// red/yellow mottled sphere
+sphere {
+
+	origin	< -26, -5, -85 >
+	radius	25
+
+	material {
+		perlin < 0.5, 0, 0 > < 1.6, 1.6, 0 >
+		ambient 0.5
+		diffuse 1
+	}
+
+}
+// metal sphere
+sphere {
+
+	origin	< 26, -5, -85 >
+	radius	25
+
+	material {
+		ambient 0
+		diffuse 0
+		specular 1
+		specularPower 1000
+		reflectance 0.9
+	}
+
+}
+
+
+// glass sphere
+sphere {
+ 	origin < 0, -14, -48 >
+	radius 15
+
+	material {
+		color < 1, 1, 1 >
+		ambient 0
+		diffuse 0
+		refraction 0.95
+		refractionIndex 1.51
+		noShadow
+	}
+}
+
+
+// light in front
+light {
+	location <40, 40, 0>
+	color <1,1,1>
+	intensity 1
+	}
+
+
+// light in the back
+light {
+	location <-10, 40, -80>
+	color <0.8, 0.2, 0.2>
+	intensity 0.2
+}
