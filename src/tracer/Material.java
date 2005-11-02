@@ -19,6 +19,7 @@ public class Material {
 		refraction = 0.0f;
 		refractionIndex = 1.0f;
 		perlin = color;
+		noshadow = false;
 	}
 	
 	public Vec3 color;	
@@ -32,6 +33,7 @@ public class Material {
 	public float refraction;
 	public float refractionIndex;
 	public Vec3 perlin;
+	public boolean noshadow;
 	
 	public void parse( Parser p ) throws IOException {
 		p.parseKeyword( "{" );
@@ -62,6 +64,8 @@ public class Material {
 				color.parse( p );
 				perlin = new Vec3();
 				perlin.parse( p );
+			} else if( p.tryKeyword("noshadow") ) {
+				noshadow = true;
 			} else {
 				System.out.println( p.tokenWasUnexpected() );	
 			}

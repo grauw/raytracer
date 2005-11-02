@@ -101,6 +101,7 @@ sphere {
 		ambient 0
 		refraction 0.95
 		refractionindex 1.59
+		noshadow
 	}
 }
 

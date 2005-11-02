@@ -218,7 +218,7 @@ public class Ray {
 		Iterator i = Tracer.scene.iterator();
 		while( i.hasNext() ) {
 			Traceable t = (Traceable)i.next();
-			if( t != ignoreObject ) {
+			if( t != ignoreObject && !t.material.noshadow ) {
 				if (t.hit(this)) return true;
 			}
 		}
