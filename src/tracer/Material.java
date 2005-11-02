@@ -48,7 +48,7 @@ public class Material {
 				diffuse = p.parseFloat();
 			} else if( p.tryKeyword("specular") ) {
 				specular = p.parseFloat();
-			} else if( p.tryKeyword("specularPower") ) {
+			} else if( p.tryKeyword("specularpower") ) {
 				specularPower = p.parseFloat();
 			} else if( p.tryKeyword("reflectance") ) {
 				reflectance = p.parseFloat();
