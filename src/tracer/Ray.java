@@ -114,7 +114,7 @@ public class Ray {
 			if (material.refraction > 0) {
 				Vec3 refractionColor = null;	// final colour of refraction
 				Vec3 trans = new Vec3();		// transmitted vector (filled in later)
-				Vec3 k;							// light attenuation factor (not implemented)
+				Vec3 k;							// light attenuation factor
 				float c = 0;
 				Vec3 incidence = direction.normalize();	// incidence light vector
 				Vec3 normal = nearestHit.normal;		// normal vector
@@ -132,6 +132,7 @@ public class Ray {
 				}
 				// if from object into air
 				else {
+					// distance-dependent attenuation (not implemented)
 					k = new Vec3(1,1,1);
 					if (refract(incidence, normal.times(-1), 1/material.refractionIndex, trans)) {
 						c = trans.dot(normal);				// cos 180-phi
@@ -160,6 +161,7 @@ public class Ray {
 						refractionColor = k.times(reflColor.times(R).add(transColor.times(1-R)));
 					}
 				}
+				// return colour with refraction factor applied 
 				color = color.times(1 - material.refraction);
 				color = color.add(refractionColor.times(material.refraction));
 			}
