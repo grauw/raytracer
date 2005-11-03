@@ -77,19 +77,19 @@ sphere {
 	}
 
 }
-/*
+
 triangle {
 
-	vertice1 < 25, -5, -60 >
-	vertice3 < 5, -20, -30 >
-	vertice2 < -20, -5, -60 >
+	vertice1 < 30, 5, -60 >
+	vertice3 < 10, 10, -30 >
+	vertice2 < 30, 35, -60 >
 
 	material {
-		color < 0.2, 0.2, 0.8 >
+		color < 1.0, 0.5, 0.0 >
 	}
 
 }
-*/
+
 
 // witte bol in het midden
 sphere {
