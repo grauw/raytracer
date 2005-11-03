@@ -209,6 +209,45 @@ public class Ray {
 		}
 	}
 	
+	public static float noise( Vec3 v ) {
+		float i,j,k;
+		float sum = 0.0f;
+		float p = (float) Math.floor(v.x);
+		float q = (float) Math.floor(v.y);
+		float r = (float) Math.floor(v.z);
+		for (i=p; i<p+2;i++) {
+			for (j=q; j<q+2; j++) {
+				for (k=r; k<r+2; k++) {
+		        sum += big_omega( v.x-i, v.y-j, v.z-k, i, j, k );
+		      }
+		    }
+		  }
+		  return sum;
+	}		
+	//interpolation function
+	public static float big_omega( float u, float v, float w, float i, float j, float k) {
+		Vec3 v3 = new Vec3( u, v, w );
+		return small_omega(u)*small_omega(v)*small_omega(w)*( hash(i,j,k).dot(v3));
+	}
+	//cubic weight function
+	public static float small_omega( float t ) {
+		float s = Math.abs(t);
+		if ( s < 1 ) return (2*s*s*s - 3*s*s + 1);
+		else return 0;
+	}
+	//hash function for perlin noise
+	public static Vec3 hash( float i, float j, float k ) {
+		Vec3[]G = Tracer.G;
+		int[]P = Tracer.P;	
+		int n = P.length;
+		//int a = P[ (int) (Math.abs(k) % 256) ];
+		//int b = P[ (int) (Math.abs(j + a) % 256) ];
+		//int c = P[ (int) (Math.abs(i + b) % 256) ];
+		int a = P[ (int) (Math.abs(k % n)) ];
+		int b = P[ (int) (Math.abs(j % a)) ];
+		int c = P[ (int) (Math.abs(i % b)) ];
+		return G[ c ];
+	}	
 	
 	/**
 	 * Checks if the ray (origin + t*direction) hits the scene with 0 <= t <= 1.

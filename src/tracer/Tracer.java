@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.awt.image.MemoryImageSource;
 import java.io.IOException;
 
@@ -33,6 +35,8 @@ public class Tracer extends Frame {
 	public static ArrayList lights;
 	public static int width = 400;
 	public static int height = 400;
+	public static Vec3[] G = randomArray();
+	public static int[] P = textureMap();
 	
 	/**
 	 * Loads and parses the file "scene.txt". Adds the things it recognizes to
@@ -178,6 +182,41 @@ public class Tracer extends Frame {
 		
 	}
 
+	//randomArray en randomVec3 maken het array G met random vectoren
+	public static Vec3[] randomArray() {
+		int i;
+		Vec3[] r = new Vec3[256];	  
+		for (i=0; i<r.length; i++) {
+			r[i] = randomVec3();			
+		}  
+		return r;
+	}
+	
+	public static Vec3 randomVec3() {
+		float x, y, z;
+		x = (float) (2*Math.random()-1);
+		y = (float) (2*Math.random()-1);
+		z = (float) (2*Math.random()-1);
+		Vec3 v = new Vec3(x, y, z);
+		if (v.lengthSquared()>=1) randomVec3();
+		return v.normalize();
+	}
+	//textureMap maakt een array P met random gesorteerde integers van 0 tot 255.
+	public static int[] textureMap() {
+		int w;
+		int[]a = new int[256];
+		
+		List randomList = new ArrayList(256);
+		  for (w=0; w<256; w++) {
+		    randomList.add(new Integer(w));
+		  }
+		  Collections.shuffle(randomList);
+		  for (w=0; w<256; w++) {
+			  a[w] = ((Integer) randomList.get(w)).intValue();
+		  } 
+		return a;
+	}
+	
 	public static void main(String args[]) {
 		Tracer mainFrame = new Tracer();
 		mainFrame.setTitle("Tracer");
