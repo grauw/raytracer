@@ -21,6 +21,7 @@ public class Ray {
 	 * using a shadow feeler).
 	 */
 	public Vec3 localLight( IntersectionInfo info, Light light ) {
+		Vec3 color = perlin(info.object.material, info.location);
 		/* diffuse component */
 		// vector w towards light source
 		Vec3 lightvector = light.location.minus(info.location).normalize();
@@ -29,7 +30,7 @@ public class Ray {
 //		if (ianglecos < 0) ianglecos = 0;
 		// light color * angle * intensity * diffuse property
 		Vec3 diffuse = new Vec3(light.color
-				.times(info.object.material.color)
+				.times(color)
 				.times(light.intensity)
 				.times(ianglecos)
 				.times(info.object.material.diffuse));
@@ -74,7 +75,8 @@ public class Ray {
 		if( nearestHit != null ) {
 			// actually hit something
 			Material material = nearestHit.object.material;
-			Vec3 color = material.color.times( material.ambient ); // ambient
+			Vec3 color = perlin(nearestHit.object.material, nearestHit.location)
+					.times( material.ambient ); 	// ambient
 			
 			// local contribution of light
 			Iterator lightIter = Tracer.lights.iterator();
@@ -210,11 +212,11 @@ public class Ray {
 	}
 	
 	public static float noise( Vec3 v ) {
-		float i,j,k;
+		int i,j,k;
 		float sum = 0.0f;
-		float p = (float) Math.floor(v.x);
-		float q = (float) Math.floor(v.y);
-		float r = (float) Math.floor(v.z);
+		int p = (int) Math.floor(v.x);
+		int q = (int) Math.floor(v.y);
+		int r = (int) Math.floor(v.z);
 		for (i=p; i<p+2;i++) {
 			for (j=q; j<q+2; j++) {
 				for (k=r; k<r+2; k++) {
@@ -227,7 +229,7 @@ public class Ray {
 	//interpolation function
 	public static float big_omega( float u, float v, float w, float i, float j, float k) {
 		Vec3 v3 = new Vec3( u, v, w );
-		return small_omega(u)*small_omega(v)*small_omega(w)*( hash(i,j,k).dot(v3));
+		return small_omega(u)*small_omega(v)*small_omega(w)*hash((int)i,(int)j,(int)k).dot(v3);
 	}
 	//cubic weight function
 	public static float small_omega( float t ) {
@@ -236,18 +238,27 @@ public class Ray {
 		else return 0;
 	}
 	//hash function for perlin noise
-	public static Vec3 hash( float i, float j, float k ) {
+	public static Vec3 hash( int i, int j, int k ) {
 		Vec3[]G = Tracer.G;
-		int[]P = Tracer.P;	
+		int[]P = Tracer.P;
 		int n = P.length;
-		//int a = P[ (int) (Math.abs(k) % 256) ];
-		//int b = P[ (int) (Math.abs(j + a) % 256) ];
-		//int c = P[ (int) (Math.abs(i + b) % 256) ];
-		int a = P[ (int) (Math.abs(k % n)) ];
-		int b = P[ (int) (Math.abs(j % a)) ];
-		int c = P[ (int) (Math.abs(i % b)) ];
+		int a = P[ modulo(k, n) ];
+		int b = P[ modulo(j + a, n) ];
+		int c = P[ modulo(i + b, n) ];
 		return G[ c ];
-	}	
+	}
+	//modulo operation that makes -1 -> n-1.
+	public static int modulo(int dividend, int divisor) {
+		return Tracer.P[ (dividend < 0 ? divisor : 0) + dividend % divisor ];
+	}
+	// calculates colour on material given a location, applies Perlin if there is.
+	public static Vec3 perlin(Material material, Vec3 location) {
+		if (material.color == material.perlin) {
+			return material.color;
+		}
+		float noise = Math.abs(noise(location));
+		return material.color.times(1-noise).add(material.perlin.times(noise));
+	}
 	
 	/**
 	 * Checks if the ray (origin + t*direction) hits the scene with 0 <= t <= 1.
