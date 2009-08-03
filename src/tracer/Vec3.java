@@ -112,11 +112,7 @@ public class Vec3 {
 	 * Note: I modified this to *not* change this instance
 	 */
 	public Vec3 normalize() {
-		float invLength = 1.0f / length();
-		return new Vec3(
-				x *= invLength,
-				y *= invLength,
-				z *= invLength);
+		return times(1.0f / length());
 	}
 	
 	/**
