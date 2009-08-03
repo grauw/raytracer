@@ -31,8 +31,8 @@ public class Tracer extends Frame {
 	Image offscreenImage;
 	int[] pixelBuffer;
 	public static Camera camera;
-	public static ArrayList scene;
-	public static ArrayList lights;
+	public static ArrayList<Traceable> scene;
+	public static ArrayList<Light> lights;
 	public static int width = 400;
 	public static int height = 400;
 	public static Vec3[] G = randomArray();
@@ -44,8 +44,8 @@ public class Tracer extends Frame {
 	 */
 	public void loadScene() {
 		camera = new Camera();
-		scene = new ArrayList();
-		lights = new ArrayList();
+		scene = new ArrayList<Traceable>();
+		lights = new ArrayList<Light>();
 		try {
 			
 			Parser p = new Parser( "scene.txt" );
@@ -206,13 +206,13 @@ public class Tracer extends Frame {
 		int w;
 		int[]a = new int[256];
 		
-		List randomList = new ArrayList(256);
+		List<Integer> randomList = new ArrayList<Integer>(256);
 		  for (w=0; w<256; w++) {
 		    randomList.add(new Integer(w));
 		  }
 		  Collections.shuffle(randomList);
 		  for (w=0; w<256; w++) {
-			  a[w] = ((Integer) randomList.get(w)).intValue();
+			  a[w] = randomList.get(w).intValue();
 		  } 
 		return a;
 	}

@@ -60,10 +60,10 @@ public class Ray {
 		// test all Traceable object in the scene for collision.
 		// store the nearest one.
 		IntersectionInfo nearestHit = null;
-		Iterator i = Tracer.scene.iterator();
+		Iterator<Traceable> i = Tracer.scene.iterator();
 		while( i.hasNext() ) {
 			
-			Traceable t = (Traceable)i.next();
+			Traceable t = i.next();
 			if( t != currentObject ) {
 				IntersectionInfo info = t.intersect( this );
 				if(  info.hit  &&  (nearestHit==null || info.distance<nearestHit.distance)  ) {
@@ -79,9 +79,9 @@ public class Ray {
 					.times( material.ambient ); 	// ambient
 			
 			// local contribution of light
-			Iterator lightIter = Tracer.lights.iterator();
+			Iterator<Light> lightIter = Tracer.lights.iterator();
 			while( lightIter.hasNext() ) {
-				Light light = (Light)lightIter.next();
+				Light light = lightIter.next();
 				Vec3 shadowFeelerDirection = light.location.minus( nearestHit.location );
 				Vec3 color2 = new Vec3();
 				// multiple randomised shadow feelers (area lights)
@@ -267,9 +267,9 @@ public class Ray {
 	 */
 	public boolean hit( Traceable ignoreObject ) {
 		// test all Traceable object in the scene for collision.
-		Iterator i = Tracer.scene.iterator();
+		Iterator<Traceable> i = Tracer.scene.iterator();
 		while( i.hasNext() ) {
-			Traceable t = (Traceable)i.next();
+			Traceable t = i.next();
 			if( t != ignoreObject && !t.material.noshadow ) {
 				if (t.hit(this)) return true;
 			}
